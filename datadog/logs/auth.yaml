@@ -1,0 +1,6 @@
+logs:
+  - type: file
+    path: /root/coco-app/log/auth*.log
+    service: auth
+    source: coco-dev
+    sourcecategory: sourcecode

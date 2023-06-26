@@ -1,0 +1,6 @@
+logs:
+  - type: file
+    path: /root/coco-app/log/rpt*.log
+    service: rpt
+    source: coco-dev
+    sourcecategory: sourcecode

@@ -1,0 +1,4 @@
+# docker build -t datadog-agent .
+
+FROM gcr.io/datadoghq/agent:latest
+RUN agent integration install -r -t datadog-gnatsd==1.0.0

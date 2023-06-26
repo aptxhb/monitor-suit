@@ -1,0 +1,48 @@
+auth_enabled: false
+server:
+  http_listen_port: 3100
+memberlist:
+  join_members:
+    - loki:7946
+compactor:
+  retention_enabled: true
+  shared_store: s3
+  compaction_interval: 10m
+  retention_delete_delay: 2h
+  retention_delete_worker_count: 150
+table_manager:
+  index_tables_provisioning:
+    provisioned_write_throughput: 10
+    provisioned_read_throughput: 10
+  chunk_tables_provisioning:
+    provisioned_write_throughput: 10
+    provisioned_read_throughput: 10
+  retention_deletes_enabled: true
+  retention_period: 336h
+schema_config:
+  configs:
+    - from: 2021-08-01
+      store: boltdb-shipper
+      object_store: s3
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h
+common:
+  path_prefix: /loki
+  replication_factor: 1
+  storage:
+    s3:
+      endpoint: docker.for.mac.localhost:9000
+      insecure: true
+      bucketnames: loki-data
+      access_key_id: rKD4GuT8RktCdZKmuxtE
+      secret_access_key: yZH1h1UlgQYGL1OvLWDlV3a9ZrLz5d77FSxzJ7Gt
+      s3forcepathstyle: true
+  ring:
+    kvstore:
+      store: memberlist
+ruler:
+  storage:
+    s3:
+      bucketnames: loki-ruler

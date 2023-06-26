@@ -1,0 +1,6 @@
+logs:
+  - type: file
+    path: /root/coco-app/log/mgr*.log
+    service: mgr
+    source: coco-dev
+    sourcecategory: sourcecode

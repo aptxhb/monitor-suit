@@ -1,0 +1,69 @@
+# Do not use this configuration in production.
+# It is for demonstration purposes only.
+# Run Mimir in single process mode, with all components running in 1 process.
+# target: all,alertmanager,overrides-exporter
+# target: all,alertmanager
+multitenancy_enabled: false
+# Configure Mimir to use Minio as object storage backend.
+common:
+  storage:
+    backend: s3
+    s3:
+      bucket_name: mimir-data
+      endpoint: docker.for.mac.localhost:9000
+      access_key_id: 5GdMov5fYsQaHOXO4bWN
+      secret_access_key: 7QxEtcQsq8vZ7ZGkDBftWyDlZo26NUCD9qhIfCKO
+      insecure: true
+
+# Blocks storage requires a prefix when using a common object storage bucket.
+blocks_storage:
+  storage_prefix: blocks
+  tsdb:
+    dir: /data/ingester
+
+# The compactor block configures the compactor responsible for compacting TSDB blocks.
+compactor:
+  # Directory to temporarily store blocks underdoing compaction.
+  data_dir: /tmp/mimir/compactor
+  # The sharding ring type used to share the hashed ring for the compactor.
+  sharding_ring:
+    # Use memberlist backend store (the default).
+    kvstore:
+      store: memberlist
+
+# The ingester receives data from the distributor and processes it into indices and blocks.
+ingester:
+  # The ring to share hash ring data across instances.
+  ring:
+    # The address advertised in the ring. Localhost.
+    instance_addr: 127.0.0.1
+    # Use memberlist backend store (the default).
+    kvstore:
+      store: memberlist
+    # Only run one instance of the ingesters.
+    # Note: It is highly recommended to run more than one ingester in production, the default is an RF of 3.
+    replication_factor: 1
+
+# Use memberlist, a gossip-based protocol, to enable the 3 Mimir replicas to communicate
+memberlist:
+  join_members: [mimir]
+
+ruler:
+  rule_path: /data/ruler
+  alertmanager_url: http://docker.for.mac.localhost:8080/alertmanager
+  ring:
+    # Quickly detect unhealthy rulers to speed up the tutorial.
+    heartbeat_period: 2s
+    heartbeat_timeout: 10s
+
+alertmanager:
+  data_dir: /data/alertmanager
+  fallback_config_file: /etc/alertmanager-fallback-config.yaml
+  external_url: http://docker.for.mac.localhost:9009/alertmanager
+
+# The server block configures the Mimir server.
+server:
+  # Listen on port 9009 for all incoming requests.
+  http_listen_port: 9009
+  # Log messages at info level.
+  log_level: info

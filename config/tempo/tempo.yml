@@ -1,0 +1,77 @@
+server:
+  http_listen_port: 3200
+multitenancy_enabled: false
+# The distributor receives incoming trace span data for the system.
+distributor:
+  ring:
+    kvstore:
+      store: memberlist
+      prefix: collectors/
+  receivers: # this configuration will listen on all ports and protocols that tempo is capable of.
+    jaeger: # the receives all come from the OpenTelemetry collector.  more configuration information can
+      protocols: # be found there: https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver
+        thrift_http: #
+        grpc: # for a production deployment you should only enable the receivers you need!
+        thrift_binary:
+        thrift_compact:
+    zipkin:
+    otlp:
+      protocols:
+        http:
+        grpc:
+    opencensus:
+
+memberlist:
+  abort_if_cluster_join_fails: false
+  join_members: [tempo]
+
+# The ingester receives data from the distributor and processes it into indices and blocks.
+ingester:
+  trace_idle_period: 1s # The length of time after a trace has not received spans to consider it complete and flush it.
+  max_block_bytes: 1_000_000 # Cut the head block when it hits this size or
+  max_block_duration: 5m # this much time passes
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+        prefix: collectors/
+
+# The compactor block configures the compactor responsible for compacting TSDB blocks.
+compactor:
+  ring:
+    kvstore:
+      store: ""
+      prefix: collectors/
+  compaction:
+    compaction_window: 1h # Blocks in this time window will be compacted together.
+    max_block_bytes: 100_000_000 # Maximum size of a compacted block.
+    block_retention: 1h # How long to keep blocks. Default is 14 days, this demo system is short-lived.
+    compacted_block_retention: 10m # How long to keep compacted blocks stored elsewhere.
+
+storage:
+  trace:
+    backend: s3
+    s3:
+      bucket: tempo-data
+      endpoint: docker.for.mac.localhost:9000
+      access_key: hui9FWtDuQnmpI48ijfw
+      secret_key: 4FzXhRgGRX2xh5IsSVgeqwcVOWFn5SMkvTcf2SoJ
+      insecure: true
+    pool:
+      queue_depth: 10000
+    wal:
+      path: /var/tempo/wal
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+      cluster: docker-compose
+  storage:
+    path: /tmp/tempo/generator/wal
+    remote_write:
+      - url: http://docker.for.mac.localhost:9009/api/v1/push
+        send_exemplars: true
+# Global override configuration.
+overrides:
+  metrics_generator_processors: ["service-graphs", "span-metrics"] # The types of metrics generation to enable for each tenant.

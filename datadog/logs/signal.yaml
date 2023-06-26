@@ -1,0 +1,6 @@
+logs:
+  - type: file
+      path: /root/coco-app/log/signal*.log
+      service: signal
+      source: coco-dev
+      sourcecategory: sourcecode

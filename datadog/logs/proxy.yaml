@@ -1,0 +1,6 @@
+logs:
+  - type: file
+      path: /root/coco-app/log/proxy*.log
+      service: proxy
+      source: coco-dev
+      sourcecategory: sourcecode

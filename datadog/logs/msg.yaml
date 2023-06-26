@@ -1,0 +1,6 @@
+logs:
+  - type: file
+    path: /root/coco-app/log/msg*.log
+    service: msg
+    source: coco-dev
+    sourcecategory: sourcecode

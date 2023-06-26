@@ -1,0 +1,6 @@
+logs:
+  - type: file
+      path: /root/coco-app/log/store*.log
+      service: store
+      source: coco-dev
+      sourcecategory: sourcecode

@@ -1,0 +1,42 @@
+init_config:
+
+instances:
+  - prometheus_url: http://34.80.62.173/monitor/metrics
+    namespace: "dev"
+    metrics:
+      - coco*
+
+  - prometheus_url: http://34.80.62.173/auth-metrics/metrics
+    namespace: "dev"
+    metrics:
+      - coco*
+
+  - prometheus_url: http://34.80.62.173/proxy-metrics/metrics
+    namespace: "dev"
+    metrics:
+      - coco*
+
+  - prometheus_url: http://34.80.62.173/signal-metrics/metrics
+    namespace: "dev"
+    metrics:
+      - coco*
+
+  - prometheus_url: http://34.80.62.173/store-metrics/metrics
+    namespace: "dev"
+    metrics:
+      - coco*
+
+  - prometheus_url: http://34.80.62.173/rpt-metrics/metrics
+    namespace: "dev"
+    metrics:
+      - coco*
+
+  - prometheus_url: http://34.80.62.173/msg-metrics/metrics
+    namespace: "dev"
+    metrics:
+      - coco*
+
+  - prometheus_url: http://34.80.62.173/mgr-metrics/metrics
+    namespace: "dev"
+    metrics:
+      - coco*
